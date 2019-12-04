@@ -1,10 +1,12 @@
 #import "SBIconView.h"
 #import "SBIconLegibilityLabelView.h"
 #import "SBIconLabelImageParameters.h"
+#import "SBApplication.h"
 //判断手势的全局变量
 static CGPoint gestureStartPoint;
 //图标的新名字
 static NSString * NewIconName;
+#define kSettingsFilePath "/var/mobile/Library/Preferences/com.GFGWin.iconrenamer.plist"
 %hook SBIconView
 
 %new
@@ -12,10 +14,14 @@ static NSString * NewIconName;
 -(void)handleSwipeFrom
 {
 	NSString * bundleID = [[self icon] applicationBundleID];
-	//NSLog(@"gfggfgaaaaa--%@",bundleID);
+    
+    //先获取当前的app简便方法
+    id app1 = [[self icon] application];
+	NSLog(@"gfggfgaaaaa--%@",bundleID);
+    NSLog(@"gfggfgbbbbb--%@",app1);
 	if (bundleID)
 	{
-		UIViewController * currentVC = [self getCurrentVC];
+		UIViewController *currentVC = [self getCurrentVC];
 		//NSLog(@"gfggfgcurrentVC--%@",currentVC);
 		UIAlertController *alertController = [UIAlertController alertControllerWithTitle:bundleID message:nil preferredStyle: UIAlertControllerStyleActionSheet];
 		UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
@@ -32,8 +38,44 @@ static NSString * NewIconName;
         	UIAlertController *ReNameAlertVC = [UIAlertController alertControllerWithTitle:title message:@"请输入新的名称" preferredStyle:UIAlertControllerStyleAlert];
         	UIAlertAction* actionDefault = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         		//NSLog(@"titleOne is pressed--%@",[ReNameAlertVC.textFields firstObject].text);
+                NewIconName = [ReNameAlertVC.textFields firstObject].text;
+                //先获取当前的app简便方法
+                NSMutableDictionary * dic = [NSMutableDictionary dictionaryWithContentsOfFile:@kSettingsFilePath];
+                if (dic.allKeys>0)
+                {
+                    [dic setObject:NewIconName forKey:bundleID];
+                    [dic writeToFile:@kSettingsFilePath atomically:YES];
+                }else
+                {
+                    NSMutableDictionary * dic1 = [[NSMutableDictionary alloc]init];
+                    [dic1 setObject:NewIconName forKey:bundleID];
+                    [dic1 writeToFile:@kSettingsFilePath atomically:YES];
+                }
+                
+                // app1.displayName=@"NewIconName";
+
+                ////先获取当前的app复杂方法，获取所有，然后遍历
+                // SBIconController * iconController = [(SBHomeScreenViewController *)currentVC iconController];
+                // NSLog(@"gfggfg--SBIconController%@",iconController);
+                // NSArray *allApplications  = [iconController allApplications];
+                // for (int i = 0; i < allApplications.count; i++)
+                // {
+
+                //     SBApplication *app = allApplications[i];
+                //     NSLog(@"gfggfg--SBApplication%@",app);
+                //     if ([[app bundleIdentifier] isEqualToString:bundleID])
+                //     {
+                //         NSLog(@"gfggfg--app%@ ---- appname%@",app,[app bundleIdentifier]);
+                //         // app.displayName=@"NewIconName";
+                        
+                //     }
+
+                // }
+
+
+                // [iconController loadView];
     		}];
-    
+            
     		UIAlertAction* actionCancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
         		//NSLog(@"titleThree is pressed");
     		}];
@@ -82,7 +124,6 @@ static NSString * NewIconName;
     %orig;
     UITouch *touch = [touches anyObject];
     gestureStartPoint= [touch locationInView:[(UIView *)self superview]];//开始触摸
-    
 }
 
 
@@ -140,9 +181,20 @@ static NSString * NewIconName;
 
 %end
 
-// %hook SBIconLegibilityLabelView
-// - (void)updateIconLabelWithSettings:(id)arg1 imageParameters:(id)arg2{
-// 	NSLog(@"gfggfg----%@----%@",arg1,arg2);
-// 	%orig(arg1,arg2);
-// }
-// %end
+%hook SBApplication
+- (id)displayName{
+    NSMutableDictionary * dic = [NSMutableDictionary dictionaryWithContentsOfFile:@kSettingsFilePath];
+    if (dic.allKeys>0)
+    {
+       for (int i = 0; i < dic.allKeys.count; i++)
+       {
+           if ([self.bundleIdentifier isEqualToString:dic.allKeys[i]])
+           {
+               return [dic objectForKey:dic.allKeys[i]];
+           }
+       }
+    }
+    return %orig;
+}
+%end
+
