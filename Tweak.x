@@ -17,8 +17,8 @@ static NSString * NewIconName;
     
     //先获取当前的app简便方法
     id app1 = [[self icon] application];
-	NSLog(@"gfggfgaaaaa--%@",bundleID);
-    NSLog(@"gfggfgbbbbb--%@",app1);
+	// NSLog(@"gfggfgaaaaa--%@",bundleID);
+ //    NSLog(@"gfggfgbbbbb--%@",app1);
 	if (bundleID)
 	{
 		UIViewController *currentVC = [self getCurrentVC];
