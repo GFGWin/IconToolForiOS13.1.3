@@ -36,14 +36,44 @@ static UIViewController *currentVC;
         UIAlertAction *setBadgeAction = [UIAlertAction actionWithTitle:@"自定义角标" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [self myBadgeNumberOnTheApp:app];
         }];
+        UIAlertAction *getBundleAction = [UIAlertAction actionWithTitle:@"在Filza中打开(App)" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            NSString * bundlePath = [(NSURL *)[self applicationBundleURL] path];
+            [self jumpToApp:bundlePath];
+        }];
+        UIAlertAction *getSandBoxAction = [UIAlertAction actionWithTitle:@"在Filza中打开(Data)" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            NSString * homePath = [(NSURL *)[[app info] dataContainerURL] path];
+            [self jumpToApp:homePath];
+        }];
 
 		[alertController addAction:cancelAction];
 		[alertController addAction:archiveAction];
 		[alertController addAction:ReNameIcon];
         [alertController addAction:setBadgeAction];
+        [alertController addAction:getBundleAction];
+        [alertController addAction:getSandBoxAction];
 		[currentVC presentViewController:alertController animated:YES completion:nil];
 	}
 }
+%new
+-(void)jumpToApp:(NSString *)path{
+    UIApplication * app1 = [UIApplication sharedApplication];
+    NSString *filePath = [NSString stringWithFormat:@"filza://view%@/",path];
+    NSURL * url = [NSURL URLWithString:filePath];
+    BOOL canOpen = [[UIApplication sharedApplication] canOpenURL:url];
+    if (canOpen)
+    {
+        [app1 openURL:url];
+    }else
+    {
+        UIAlertController *JumpFailAlertVC = [UIAlertController alertControllerWithTitle:@"打开失败" message:@"请在Cydia中安装Filza，目前只支持Filza！" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* actionDefault = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        }];
+        [JumpFailAlertVC addAction:actionDefault];
+        [currentVC presentViewController:JumpFailAlertVC animated:YES completion:nil];
+    }
+    
+}
+
 %new
 -(void)iconRenameWithBundleID:(NSString *)bundleID onTheApp:(id)app
 {

@@ -7,7 +7,8 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = icontool
 
-icontool_FILES = Tweak.x
+icontool_FILES = Tweak.x 
+icontool_FRAMEWORKS = UIKit
 icontool_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/tweak.mk
