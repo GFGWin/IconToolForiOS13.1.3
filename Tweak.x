@@ -1,7 +1,7 @@
-#import "SBIconView.h"
-#import "SBIconLegibilityLabelView.h"
-#import "SBIconLabelImageParameters.h"
-#import "SBApplication.h"
+#import "relyonFile/SBIconView.h"
+#import "relyonFile/SBIconLegibilityLabelView.h"
+#import "relyonFile/SBIconLabelImageParameters.h"
+#import "relyonFile/SBApplication.h"
 //判断手势的全局变量
 static CGPoint gestureStartPoint;
 //图标的新名字
