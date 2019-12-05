@@ -27,7 +27,7 @@ static CGPoint gestureStartPoint;
 #define _LOGOS_RETURN_RETAINED
 #endif
 
-@class SBApplication; @class SBIconView; 
+@class SBIconView; @class SBApplication; 
 static void _logos_method$_ungrouped$SBIconView$handleSwipeFrom(_LOGOS_SELF_TYPE_NORMAL SBIconView* _LOGOS_SELF_CONST, SEL); static UIViewController * _logos_method$_ungrouped$SBIconView$getCurrentVC(_LOGOS_SELF_TYPE_NORMAL SBIconView* _LOGOS_SELF_CONST, SEL); static void (*_logos_orig$_ungrouped$SBIconView$touchesBegan$withEvent$)(_LOGOS_SELF_TYPE_NORMAL SBIconView* _LOGOS_SELF_CONST, SEL, NSSet *, UIEvent *); static void _logos_method$_ungrouped$SBIconView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL SBIconView* _LOGOS_SELF_CONST, SEL, NSSet *, UIEvent *); static void (*_logos_orig$_ungrouped$SBIconView$touchesEnded$withEvent$)(_LOGOS_SELF_TYPE_NORMAL SBIconView* _LOGOS_SELF_CONST, SEL, NSSet *, UIEvent *); static void _logos_method$_ungrouped$SBIconView$touchesEnded$withEvent$(_LOGOS_SELF_TYPE_NORMAL SBIconView* _LOGOS_SELF_CONST, SEL, NSSet *, UIEvent *); static id (*_logos_orig$_ungrouped$SBApplication$displayName)(_LOGOS_SELF_TYPE_NORMAL SBApplication* _LOGOS_SELF_CONST, SEL); static id _logos_method$_ungrouped$SBApplication$displayName(_LOGOS_SELF_TYPE_NORMAL SBApplication* _LOGOS_SELF_CONST, SEL); 
 
 #line 8 "Tweak.x"
@@ -42,7 +42,7 @@ static void _logos_method$_ungrouped$SBIconView$handleSwipeFrom(_LOGOS_SELF_TYPE
 	NSString * bundleID = [[self icon] applicationBundleID];
     
     
-    
+    id app1 = [[self icon] application];
 	
  
 	if (bundleID)
@@ -77,6 +77,9 @@ static void _logos_method$_ungrouped$SBIconView$handleSwipeFrom(_LOGOS_SELF_TYPE
                     [dic1 writeToFile:@kSettingsFilePath atomically:YES];
                 }
                 
+                
+                id str = [app1 badgeValue];
+                [app1 setBadgeValue:str];
                 
 
                 
@@ -225,4 +228,4 @@ static id _logos_method$_ungrouped$SBApplication$displayName(_LOGOS_SELF_TYPE_NO
 
 static __attribute__((constructor)) void _logosLocalInit() {
 {Class _logos_class$_ungrouped$SBIconView = objc_getClass("SBIconView"); { char _typeEncoding[1024]; unsigned int i = 0; _typeEncoding[i] = 'v'; i += 1; _typeEncoding[i] = '@'; i += 1; _typeEncoding[i] = ':'; i += 1; _typeEncoding[i] = '\0'; class_addMethod(_logos_class$_ungrouped$SBIconView, @selector(handleSwipeFrom), (IMP)&_logos_method$_ungrouped$SBIconView$handleSwipeFrom, _typeEncoding); }{ char _typeEncoding[1024]; unsigned int i = 0; memcpy(_typeEncoding + i, @encode(UIViewController *), strlen(@encode(UIViewController *))); i += strlen(@encode(UIViewController *)); _typeEncoding[i] = '@'; i += 1; _typeEncoding[i] = ':'; i += 1; _typeEncoding[i] = '\0'; class_addMethod(_logos_class$_ungrouped$SBIconView, @selector(getCurrentVC), (IMP)&_logos_method$_ungrouped$SBIconView$getCurrentVC, _typeEncoding); }MSHookMessageEx(_logos_class$_ungrouped$SBIconView, @selector(touchesBegan:withEvent:), (IMP)&_logos_method$_ungrouped$SBIconView$touchesBegan$withEvent$, (IMP*)&_logos_orig$_ungrouped$SBIconView$touchesBegan$withEvent$);MSHookMessageEx(_logos_class$_ungrouped$SBIconView, @selector(touchesEnded:withEvent:), (IMP)&_logos_method$_ungrouped$SBIconView$touchesEnded$withEvent$, (IMP*)&_logos_orig$_ungrouped$SBIconView$touchesEnded$withEvent$);Class _logos_class$_ungrouped$SBApplication = objc_getClass("SBApplication"); MSHookMessageEx(_logos_class$_ungrouped$SBApplication, @selector(displayName), (IMP)&_logos_method$_ungrouped$SBApplication$displayName, (IMP*)&_logos_orig$_ungrouped$SBApplication$displayName);} }
-#line 200 "Tweak.x"
+#line 203 "Tweak.x"

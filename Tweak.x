@@ -16,7 +16,7 @@ static NSString * NewIconName;
 	NSString * bundleID = [[self icon] applicationBundleID];
     
     //先获取当前的app简便方法
-    // id app1 = [[self icon] application];
+    id app1 = [[self icon] application];
 	// NSLog(@"gfggfgaaaaa--%@",bundleID);
  //    NSLog(@"gfggfgbbbbb--%@",app1);
 	if (bundleID)
@@ -37,7 +37,7 @@ static NSString * NewIconName;
     		NSString *title = [NSString stringWithFormat:@"%@ 图标重命名",Parameters.text];
         	UIAlertController *ReNameAlertVC = [UIAlertController alertControllerWithTitle:title message:@"请输入新的名称" preferredStyle:UIAlertControllerStyleAlert];
         	UIAlertAction* actionDefault = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        		//NSLog(@"titleOne is pressed--%@",[ReNameAlertVC.textFields firstObject].text);
+        		//保存数据
                 NewIconName = [ReNameAlertVC.textFields firstObject].text;
                 NSMutableDictionary * dic = [NSMutableDictionary dictionaryWithContentsOfFile:@kSettingsFilePath];
                 if (dic.allKeys>0)
@@ -51,6 +51,9 @@ static NSString * NewIconName;
                     [dic1 writeToFile:@kSettingsFilePath atomically:YES];
                 }
                 
+                //刷新UI,借用更改角标来刷新UI；
+                id str = [app1 badgeValue];
+                [app1 setBadgeValue:str];
                 // app1.displayName=@"NewIconName";
 
                 ////先获取当前的app复杂方法，获取所有，然后遍历
