@@ -51,7 +51,7 @@ static UIViewController *currentVC;
     SBIconLabelImageParameters * Parameters = [labelView imageParameters];
     NSString *title = [NSString stringWithFormat:@"%@ 图标重命名",Parameters.text];
     UIAlertController *ReNameAlertVC = [UIAlertController alertControllerWithTitle:title message:@"请输入新的名称" preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction* actionDefault = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction* actionDefault = [UIAlertAction actionWithTitle:@"更改" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         //保存数据
         NewIconName = [ReNameAlertVC.textFields firstObject].text;
         NSMutableDictionary * dic = [NSMutableDictionary dictionaryWithContentsOfFile:@kSettingsFilePath];
@@ -68,15 +68,34 @@ static UIViewController *currentVC;
                 
         //刷新UI,借用更改角标来刷新UI；
         id str = [app badgeValue];
+        [app setBadgeValue:0];
         [app setBadgeValue:str];
     }];
-            
+
+    UIAlertAction* recoverDefault = [UIAlertAction actionWithTitle:@"恢复" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        NSMutableDictionary * dic = [NSMutableDictionary dictionaryWithContentsOfFile:@kSettingsFilePath];
+        if (dic.allKeys>0)
+        {
+            if ([dic.allKeys containsObject:bundleID])
+            {
+                [dic removeObjectForKey:bundleID];
+                [dic writeToFile:@kSettingsFilePath atomically:YES];
+            }
+        }      
+        //刷新UI,借用更改角标来刷新UI；
+        id str = [app badgeValue];
+        [app setBadgeValue:0];
+        [app setBadgeValue:str];
+    }]; 
+
     UIAlertAction* actionCancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
     }];
     [ReNameAlertVC addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
 
     }];
+
     [ReNameAlertVC addAction:actionDefault];
+    [ReNameAlertVC addAction:recoverDefault];
     [ReNameAlertVC addAction:actionCancel];
     [currentVC presentViewController:ReNameAlertVC animated:YES completion:nil];
 }
