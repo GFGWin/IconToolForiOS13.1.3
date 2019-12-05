@@ -16,7 +16,7 @@ static NSString * NewIconName;
 	NSString * bundleID = [[self icon] applicationBundleID];
     
     //先获取当前的app简便方法
-    id app1 = [[self icon] application];
+    // id app1 = [[self icon] application];
 	// NSLog(@"gfggfgaaaaa--%@",bundleID);
  //    NSLog(@"gfggfgbbbbb--%@",app1);
 	if (bundleID)
@@ -39,7 +39,6 @@ static NSString * NewIconName;
         	UIAlertAction* actionDefault = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         		//NSLog(@"titleOne is pressed--%@",[ReNameAlertVC.textFields firstObject].text);
                 NewIconName = [ReNameAlertVC.textFields firstObject].text;
-                //先获取当前的app简便方法
                 NSMutableDictionary * dic = [NSMutableDictionary dictionaryWithContentsOfFile:@kSettingsFilePath];
                 if (dic.allKeys>0)
                 {

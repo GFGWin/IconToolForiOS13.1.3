@@ -42,9 +42,9 @@ static void _logos_method$_ungrouped$SBIconView$handleSwipeFrom(_LOGOS_SELF_TYPE
 	NSString * bundleID = [[self icon] applicationBundleID];
     
     
-    id app1 = [[self icon] application];
-	NSLog(@"gfggfgaaaaa--%@",bundleID);
-    NSLog(@"gfggfgbbbbb--%@",app1);
+    
+	
+ 
 	if (bundleID)
 	{
 		UIViewController *currentVC = [self getCurrentVC];
@@ -65,7 +65,6 @@ static void _logos_method$_ungrouped$SBIconView$handleSwipeFrom(_LOGOS_SELF_TYPE
         	UIAlertAction* actionDefault = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         		
                 NewIconName = [ReNameAlertVC.textFields firstObject].text;
-                
                 NSMutableDictionary * dic = [NSMutableDictionary dictionaryWithContentsOfFile:@kSettingsFilePath];
                 if (dic.allKeys>0)
                 {
@@ -226,4 +225,4 @@ static id _logos_method$_ungrouped$SBApplication$displayName(_LOGOS_SELF_TYPE_NO
 
 static __attribute__((constructor)) void _logosLocalInit() {
 {Class _logos_class$_ungrouped$SBIconView = objc_getClass("SBIconView"); { char _typeEncoding[1024]; unsigned int i = 0; _typeEncoding[i] = 'v'; i += 1; _typeEncoding[i] = '@'; i += 1; _typeEncoding[i] = ':'; i += 1; _typeEncoding[i] = '\0'; class_addMethod(_logos_class$_ungrouped$SBIconView, @selector(handleSwipeFrom), (IMP)&_logos_method$_ungrouped$SBIconView$handleSwipeFrom, _typeEncoding); }{ char _typeEncoding[1024]; unsigned int i = 0; memcpy(_typeEncoding + i, @encode(UIViewController *), strlen(@encode(UIViewController *))); i += strlen(@encode(UIViewController *)); _typeEncoding[i] = '@'; i += 1; _typeEncoding[i] = ':'; i += 1; _typeEncoding[i] = '\0'; class_addMethod(_logos_class$_ungrouped$SBIconView, @selector(getCurrentVC), (IMP)&_logos_method$_ungrouped$SBIconView$getCurrentVC, _typeEncoding); }MSHookMessageEx(_logos_class$_ungrouped$SBIconView, @selector(touchesBegan:withEvent:), (IMP)&_logos_method$_ungrouped$SBIconView$touchesBegan$withEvent$, (IMP*)&_logos_orig$_ungrouped$SBIconView$touchesBegan$withEvent$);MSHookMessageEx(_logos_class$_ungrouped$SBIconView, @selector(touchesEnded:withEvent:), (IMP)&_logos_method$_ungrouped$SBIconView$touchesEnded$withEvent$, (IMP*)&_logos_orig$_ungrouped$SBIconView$touchesEnded$withEvent$);Class _logos_class$_ungrouped$SBApplication = objc_getClass("SBApplication"); MSHookMessageEx(_logos_class$_ungrouped$SBApplication, @selector(displayName), (IMP)&_logos_method$_ungrouped$SBApplication$displayName, (IMP*)&_logos_orig$_ungrouped$SBApplication$displayName);} }
-#line 201 "Tweak.x"
+#line 200 "Tweak.x"
