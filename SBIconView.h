@@ -5,4 +5,6 @@
 -(void)handleSwipeFrom;
 - (UIViewController *)getCurrentVC;
 -(id)labelView;
+-(void)myBadgeNumberOnTheApp:(id)app;
+-(void)iconRenameWithBundleID:(NSString *)bundleID onTheApp:(id)app;
 @end

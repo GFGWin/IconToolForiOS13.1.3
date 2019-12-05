@@ -6,6 +6,8 @@
 static CGPoint gestureStartPoint;
 //图标的新名字
 static NSString * NewIconName;
+
+static UIViewController *currentVC;
 #define kSettingsFilePath "/var/mobile/Library/Preferences/com.GFGWin.iconrenamer.plist"
 %hook SBIconView
 
@@ -14,15 +16,10 @@ static NSString * NewIconName;
 -(void)handleSwipeFrom
 {
 	NSString * bundleID = [[self icon] applicationBundleID];
-    
-    //先获取当前的app简便方法
-    id app1 = [[self icon] application];
-	// NSLog(@"gfggfgaaaaa--%@",bundleID);
- //    NSLog(@"gfggfgbbbbb--%@",app1);
+    id app = [[self icon] application];
 	if (bundleID)
 	{
-		UIViewController *currentVC = [self getCurrentVC];
-		//NSLog(@"gfggfgcurrentVC--%@",currentVC);
+		currentVC = [self getCurrentVC];
 		UIAlertController *alertController = [UIAlertController alertControllerWithTitle:bundleID message:nil preferredStyle: UIAlertControllerStyleActionSheet];
 		UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
         	
@@ -32,71 +29,79 @@ static NSString * NewIconName;
 			pastboard.string = bundleID;
     	}];
     	UIAlertAction *ReNameIcon = [UIAlertAction actionWithTitle:@"图标重命名" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-    		SBIconLegibilityLabelView * labelView = [self labelView];
-    		SBIconLabelImageParameters * Parameters = [labelView imageParameters];
-    		NSString *title = [NSString stringWithFormat:@"%@ 图标重命名",Parameters.text];
-        	UIAlertController *ReNameAlertVC = [UIAlertController alertControllerWithTitle:title message:@"请输入新的名称" preferredStyle:UIAlertControllerStyleAlert];
-        	UIAlertAction* actionDefault = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        		//保存数据
-                NewIconName = [ReNameAlertVC.textFields firstObject].text;
-                NSMutableDictionary * dic = [NSMutableDictionary dictionaryWithContentsOfFile:@kSettingsFilePath];
-                if (dic.allKeys>0)
-                {
-                    [dic setObject:NewIconName forKey:bundleID];
-                    [dic writeToFile:@kSettingsFilePath atomically:YES];
-                }else
-                {
-                    NSMutableDictionary * dic1 = [[NSMutableDictionary alloc]init];
-                    [dic1 setObject:NewIconName forKey:bundleID];
-                    [dic1 writeToFile:@kSettingsFilePath atomically:YES];
-                }
-                
-                //刷新UI,借用更改角标来刷新UI；
-                id str = [app1 badgeValue];
-                [app1 setBadgeValue:str];
-                // app1.displayName=@"NewIconName";
-
-                ////先获取当前的app复杂方法，获取所有，然后遍历
-                // SBIconController * iconController = [(SBHomeScreenViewController *)currentVC iconController];
-                // NSLog(@"gfggfg--SBIconController%@",iconController);
-                // NSArray *allApplications  = [iconController allApplications];
-                // for (int i = 0; i < allApplications.count; i++)
-                // {
-
-                //     SBApplication *app = allApplications[i];
-                //     NSLog(@"gfggfg--SBApplication%@",app);
-                //     if ([[app bundleIdentifier] isEqualToString:bundleID])
-                //     {
-                //         NSLog(@"gfggfg--app%@ ---- appname%@",app,[app bundleIdentifier]);
-                //         // app.displayName=@"NewIconName";
-                        
-                //     }
-
-                // }
-
-
-                // [iconController loadView];
-    		}];
-            
-    		UIAlertAction* actionCancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        		//NSLog(@"titleThree is pressed");
-    		}];
-    		[ReNameAlertVC addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-
-    		}];
-    		[ReNameAlertVC addAction:actionDefault];
-    		[ReNameAlertVC addAction:actionCancel];
-    		[currentVC presentViewController:ReNameAlertVC animated:YES completion:nil];
+    		[self iconRenameWithBundleID:bundleID onTheApp:app];
     	}];
+
+
+        UIAlertAction *setBadgeAction = [UIAlertAction actionWithTitle:@"自定义角标" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [self myBadgeNumberOnTheApp:app];
+        }];
 
 		[alertController addAction:cancelAction];
 		[alertController addAction:archiveAction];
 		[alertController addAction:ReNameIcon];
+        [alertController addAction:setBadgeAction];
 		[currentVC presentViewController:alertController animated:YES completion:nil];
 	}
 }
+%new
+-(void)iconRenameWithBundleID:(NSString *)bundleID onTheApp:(id)app
+{
+    SBIconLegibilityLabelView * labelView = [self labelView];
+    SBIconLabelImageParameters * Parameters = [labelView imageParameters];
+    NSString *title = [NSString stringWithFormat:@"%@ 图标重命名",Parameters.text];
+    UIAlertController *ReNameAlertVC = [UIAlertController alertControllerWithTitle:title message:@"请输入新的名称" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* actionDefault = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        //保存数据
+        NewIconName = [ReNameAlertVC.textFields firstObject].text;
+        NSMutableDictionary * dic = [NSMutableDictionary dictionaryWithContentsOfFile:@kSettingsFilePath];
+        if (dic.allKeys>0)
+        {
+            [dic setObject:NewIconName forKey:bundleID];
+            [dic writeToFile:@kSettingsFilePath atomically:YES];
+        }else
+        {
+            NSMutableDictionary * dic1 = [[NSMutableDictionary alloc]init];
+            [dic1 setObject:NewIconName forKey:bundleID];
+            [dic1 writeToFile:@kSettingsFilePath atomically:YES];
+        }
+                
+        //刷新UI,借用更改角标来刷新UI；
+        id str = [app badgeValue];
+        [app setBadgeValue:str];
+    }];
+            
+    UIAlertAction* actionCancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+    }];
+    [ReNameAlertVC addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
 
+    }];
+    [ReNameAlertVC addAction:actionDefault];
+    [ReNameAlertVC addAction:actionCancel];
+    [currentVC presentViewController:ReNameAlertVC animated:YES completion:nil];
+}
 
+%new
+-(void)myBadgeNumberOnTheApp:(id)app
+{
+    SBIconLegibilityLabelView * labelView = [self labelView];
+    SBIconLabelImageParameters * Parameters = [labelView imageParameters];
+    NSString *title = [NSString stringWithFormat:@"%@ 设定角标",Parameters.text];
+    UIAlertController *badgeAlertVC = [UIAlertController alertControllerWithTitle:title message:@"请输入新的角标" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* actionDefault = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        id number = [badgeAlertVC.textFields firstObject].text;
+        [app setBadgeValue:number];
+    }];
+            
+    UIAlertAction* actionCancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+    }];
+    [badgeAlertVC addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+
+    }];
+    [badgeAlertVC addAction:actionDefault];
+    [badgeAlertVC addAction:actionCancel];
+    [currentVC presentViewController:badgeAlertVC animated:YES completion:nil];
+}
 %new
 //获取当前的VC
 - (UIViewController *)getCurrentVC {
@@ -131,7 +136,6 @@ static NSString * NewIconName;
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
     %orig;
-    //NSLog(@"gfggfgtouchesEnded");
     UITouch *touch = [touches anyObject];
     
     CGPoint currentPosition = [touch locationInView:[(UIView *)self superview]];
@@ -140,45 +144,14 @@ static NSString * NewIconName;
     
     CGFloat deltaY = gestureStartPoint.y - currentPosition.y;
     
-    float MINDISTANCE = sqrt(deltaX * deltaX + deltaY * deltaY)/2;
-    //上下滑动
-    
+    float MINDISTANCE = sqrt(deltaX * deltaX + deltaY * deltaY)/2; 
     if(fabs(deltaY) > fabs(deltaX))
     {
-        //向上滑动
-        if (deltaY > MINDISTANCE)   //有效滑动距离 MINDISTANCE
+        if (deltaY > MINDISTANCE)
         {
-            // NSLog(@"gfggfgtouchesUP");
             [self handleSwipeFrom];
-        }
-        
-        //向下滑动
-        // else if (deltaY < -MINDISTANCE)
-            
-        // {
-        //     NSLog(@"gfggfgtouchesDown");
-        //     [self handleSwipeFrom];
-        // } 
-        
+        }      
     }
-    
-    //左右滑动
-    
-    // else if(fabs(deltaX) > fabs(deltaY))
-        
-    // {
-    //     //向左滑动
-    //     if (deltaX > MINDISTANCE)
-            
-    //     {
-    //         NSLog(@"gfggfgtouchesleft");
-    //     }
-    //     //向右滑动
-    //     else if (deltaX < -MINDISTANCE)
-    //     {
-    //         NSLog(@"gfggfgtouchesright");
-    //     }
-    // }
 }
 
 %end
