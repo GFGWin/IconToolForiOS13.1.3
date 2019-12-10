@@ -83,7 +83,6 @@ static UIViewController *currentVC;
         [JumpFailAlertVC addAction:actionDefault];
         [currentVC presentViewController:JumpFailAlertVC animated:YES completion:nil];
     }
-    
 }
 
 %new
