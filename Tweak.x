@@ -37,11 +37,23 @@ static UIViewController *currentVC;
             [self myBadgeNumberOnTheApp:app];
         }];
         UIAlertAction *getBundleAction = [UIAlertAction actionWithTitle:@"在Filza中打开(App)" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            NSString * bundlePath = [(NSURL *)[self applicationBundleURL] path];
-            [self jumpToApp:bundlePath];
+            
+            NSString *version = [UIDevice currentDevice].systemVersion;
+            if ([version isEqualToString:@"13.2.3"]) {
+                // 针对 13.2.3 的iOS系统进行处理
+                NSString * bundlePath = [(NSURL *)[self applicationBundleURLForShortcuts] path];
+                [self jumpToApp:bundlePath];
+            } else {
+                // 针对 13.2.3 以下的iOS系统进行处理
+                NSString * bundlePath = [(NSURL *)[self applicationBundleURL] path];
+                [self jumpToApp:bundlePath];
+            }
+
+            
         }];
         UIAlertAction *getSandBoxAction = [UIAlertAction actionWithTitle:@"在Filza中打开(Data)" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             NSString * homePath = [(NSURL *)[[app info] dataContainerURL] path];
+
             [self jumpToApp:homePath];
         }];
 

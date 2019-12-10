@@ -7,6 +7,7 @@
 -(id)labelView;
 -(void)myBadgeNumberOnTheApp:(id)app;
 -(void)iconRenameWithBundleID:(NSString *)bundleID onTheApp:(id)app;
--(id)applicationBundleURL;
+-(id)applicationBundleURL;//for ios 13.2.2 and lower
+- (id)applicationBundleURLForShortcuts;//for ios 13.2.3
 -(void)jumpToApp:(NSString *)path;
 @end
