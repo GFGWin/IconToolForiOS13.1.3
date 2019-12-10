@@ -1,9 +1,9 @@
 Package: com.gfgwin.icontool
 Name: icontool
 Depends: mobilesubstrate
-Version: 0.0.1
+Version: 0.0.2
 Architecture: iphoneos-arm
-Description: An awesome MobileSubstrate tweak!
+Description: 图标工具 支持ios 13.2.3
 Maintainer: GFG
 Author: GFG
 Section: Tweaks
