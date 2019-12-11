@@ -2,12 +2,14 @@
 #import "relyonFile/SBIconLegibilityLabelView.h"
 #import "relyonFile/SBIconLabelImageParameters.h"
 #import "relyonFile/SBApplication.h"
+
 //判断手势的全局变量
 static CGPoint gestureStartPoint;
 //图标的新名字
 static NSString * NewIconName;
 
 static UIViewController *currentVC;
+static NSInteger changeTonumbers;
 #define kSettingsFilePath "/var/mobile/Library/Preferences/com.GFGWin.iconrenamer.plist"
 %hook SBIconView
 
@@ -56,6 +58,9 @@ static UIViewController *currentVC;
 
             [self jumpToApp:homePath];
         }];
+        UIAlertAction *reDifineNumberAction = [UIAlertAction actionWithTitle:@"自定义图标的列数" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [self resetPortraitColumns];
+        }];
 
 		[alertController addAction:cancelAction];
 		[alertController addAction:archiveAction];
@@ -63,9 +68,41 @@ static UIViewController *currentVC;
         [alertController addAction:setBadgeAction];
         [alertController addAction:getBundleAction];
         [alertController addAction:getSandBoxAction];
+        [alertController addAction:reDifineNumberAction];
 		[currentVC presentViewController:alertController animated:YES completion:nil];
 	}
 }
+%new
+-(void)resetPortraitColumns{
+    UIAlertController *ReNameAlertVC = [UIAlertController alertControllerWithTitle:@"请输入列数（整数）" message:@"请输入您期望的桌面排版的每一行的个数" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* actionDefault = [UIAlertAction actionWithTitle:@"更改" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        NSString * numbers = [ReNameAlertVC.textFields firstObject].text;
+        @try {
+                changeTonumbers = [numbers integerValue];
+            } @catch (NSException * e) {
+                NSLog(@"gfggfg");
+            } @finally {
+
+            } 
+    }];
+
+    UIAlertAction* recoverDefault = [UIAlertAction actionWithTitle:@"恢复" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        changeTonumbers = 0;
+    }]; 
+
+    UIAlertAction* actionCancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+    }];
+    [ReNameAlertVC addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+
+    }];
+
+    [ReNameAlertVC addAction:actionDefault];
+    [ReNameAlertVC addAction:recoverDefault];
+    [ReNameAlertVC addAction:actionCancel];
+    [currentVC presentViewController:ReNameAlertVC animated:YES completion:nil];
+}
+
+
 %new
 -(void)jumpToApp:(NSString *)path{
     UIApplication * app1 = [UIApplication sharedApplication];
@@ -233,3 +270,16 @@ static UIViewController *currentVC;
 }
 %end
 
+// 首页的列数（包括导航栏）
+%hook SBIconListGridLayoutConfiguration
+- (unsigned long long)numberOfPortraitColumns{
+    unsigned long long aaa = %orig;
+    if (changeTonumbers>0)
+    {
+        return changeTonumbers;
+    }else
+    {
+        return aaa;
+    }
+}
+%end                   
