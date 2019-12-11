@@ -74,7 +74,7 @@ static NSInteger changeTonumbers;
 }
 %new
 -(void)resetPortraitColumns{
-    UIAlertController *ReNameAlertVC = [UIAlertController alertControllerWithTitle:@"请输入列数（整数）" message:@"请输入您期望的桌面排版的每一行的个数" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *ReNameAlertVC = [UIAlertController alertControllerWithTitle:@"请输入列数（整数）" message:@"请输入您期望的桌面排版的每一行的个数(注意请输入整数！！！)" preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction* actionDefault = [UIAlertAction actionWithTitle:@"更改" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         NSString * numbers = [ReNameAlertVC.textFields firstObject].text;
         @try {
